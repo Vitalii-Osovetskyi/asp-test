@@ -1,0 +1,9 @@
+.vs/
+Domain/bin/
+Domain/obj/
+EF/obj/
+EFCore/bin/
+EFCore/obj/
+EF/bin/
+Test/obj/
+Test/bin/

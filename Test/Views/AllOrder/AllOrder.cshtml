@@ -1,0 +1,30 @@
+﻿@model List<Domain.Models.OrderDB>
+<h3 class="m-3">Orders in DB</h3>
+@foreach (var item in Model)
+{
+    <hr class="mx-3" />
+    <div class="row px-5">
+        <div class="col">
+            <label class="font-weight-bold">OxId:</label>
+            <div>
+                <input asp-for="@item.OxId" type="number" readonly="readonly" class="form-control">
+            </div>
+        </div>
+        <div class="col">
+            <label class="font-weight-bold">Invoice Number:</label>
+            <div>
+                <input asp-for="@item.InvoiceNumber" type="number" readonly="readonly" class="form-control">
+            </div>
+        </div>
+        <div class="col">
+            <label class="font-weight-bold">Order Status:</label>
+            <div>
+                <input asp-for="@item.Status" type="text" readonly="readonly" class="form-control">
+            </div>
+        </div>
+        <div class="col">
+            <label class="font-weight-bold">Article:</label>
+            <a class="form-control btn btn-secondary float-right" href="/OrderDetail/OrderDetail/@item.Id">Details</a>
+        </div>
+    </div>
+}

@@ -1,0 +1,51 @@
+﻿@Html.Raw(TempData["msg"])
+@model List<Domain.Models.OrderDB>
+@{ if (Model == null)
+    {
+        <h3 class="m-3">Import XML</h3>
+        <p class="m-3">Enter xml file for added orders</p>
+        <form asp-controller="Import" asp-action="Import" method="post" enctype="multipart/form-data">
+            <div class="form-group m-3">
+                <label for="xmlOrder" class="font-weight-bold">XML File:</label>
+                <input type="file" name="xmlOrder" accept=".xml" class="form-control-file">
+            </div>
+            <div class="form-group mt-5 ml-3">
+                <button type="submit" class="btn btn-secondary" value="upload">Import Orders</button>
+            </div>
+        </form>
+    }
+    else
+    {
+        <h3 class="m-3">Orders in XML</h3>
+        <form asp-controller="Import" asp-action="SetupOrders" method="post">
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <hr class="mx-3" />
+                <div class="form-group row m-4">
+                    <div class="form-group col mx-3">
+                        <label class="font-weight-bold">OxId:</label>
+                        <input asp-for="@Model[i].OxId" type="number" readonly="readonly" class="form-control text-center">
+                    </div>
+                    <div class="form-group col mx-3">
+                        <label class="font-weight-bold">Invoice Number:</label>
+                        <input asp-for="@Model[i].InvoiceNumber" type="number" class="form-control text-center" placeholder="Enter invoice number">
+                    </div>
+                    <div class="form-group col mx-3">
+                        <label class="font-weight-bold">Status:</label>
+                        <select asp-for="@Model[i].Status" class="form-control">
+                            <option selected="selected"> Processed </option>
+                            <option> Unprocessed </option>
+                            <option> Canceled </option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <input asp-for="@Model[i].Id" hidden="hidden" />
+                </div>
+            }
+            <div class="form-group mt-5 ml-3">
+                <button type="submit" class="btn btn-secondary" value="upload">Setup Orders</button>
+            </div>
+        </form>
+    }
+}
