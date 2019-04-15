@@ -29,25 +29,34 @@ namespace MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> Import(IFormFile xmlOrder)
         {
-            AllOrder LastOrders;
-            string path;
-            var originalImageFile = ContentDispositionHeaderValue.Parse(xmlOrder.ContentDisposition).FileName.Trim();
-            var filePath = Path.GetTempFileName();
-            string webRootPath = _hostingEnvironment.WebRootPath;
-            using (FileStream fs = System.IO.File.Create(Path.Combine(webRootPath, originalImageFile.Value)))
+            if (xmlOrder != null)
             {
-                path = fs.Name;
-                xmlOrder.CopyTo(fs);
-                fs.Flush();
+                AllOrder LastOrders;
+                string path;
+                var originalImageFile = ContentDispositionHeaderValue.Parse(xmlOrder.ContentDisposition).FileName.Trim();
+                var filePath = Path.GetTempFileName();
+                string webRootPath = _hostingEnvironment.WebRootPath;
+                using (FileStream fs = System.IO.File.Create(Path.Combine(webRootPath, originalImageFile.Value)))
+                {
+                    path = fs.Name;
+                    xmlOrder.CopyTo(fs);
+                    fs.Flush();
+                }
+                XmlSerializer serializer = new XmlSerializer(typeof(AllOrder));
+                using (StreamReader reader = new StreamReader(path))
+                {
+                    LastOrders = (AllOrder)serializer.Deserialize(reader);
+                }
+                List<OrderDB> addedOrders = await Task.Run(() => new DBHelper().AddOrders(LastOrders.Orders));
+                System.IO.File.Delete(path);
+                return View(addedOrders);
             }
-            XmlSerializer serializer = new XmlSerializer(typeof(AllOrder));
-            using (StreamReader reader = new StreamReader(path))
+            else
             {
-                LastOrders = (AllOrder)serializer.Deserialize(reader);
+                TempData["msg"] = "<script>alert('Enter xml file!');</script>";
+                return View();
             }
-            List<OrderDB> addedOrders = await Task.Run(() => new DBHelper().AddOrders(LastOrders.Orders));
-            System.IO.File.Delete(path);
-            return View(addedOrders);
+
         }
 
         [HttpPost]
